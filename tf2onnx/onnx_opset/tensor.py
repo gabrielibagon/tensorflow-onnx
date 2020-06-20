@@ -1477,9 +1477,9 @@ class NonMaxSuppression:
                         "soft_nms_sigma must be 0")
         ctx.remove_node(node.name)
         new_nonmaxsurppress = ctx.make_node(node.type, node.input[: 5]).output[0]
-        slice_op = GraphBuilder(ctx).make_slice({"data": new_nonmaxsurppress,
-                                                 "axes": [1], "ends": [3], "starts": [2]})
-        squeeze_op = ctx.make_node("Squeeze", [slice_op], attr={"axes": [1]})
+#         slice_op = GraphBuilder(ctx).make_slice({"data": new_nonmaxsurppress,
+#                                                  "axes": [1], "ends": [3], "starts": [2]})
+#         squeeze_op = ctx.make_node("Squeeze", [slice_op], attr={"axes": [1]})
         if len(node.input) > 5:  # v5, called by ..._with_scores(), pad_to_max_output_size always False
             ctx.make_node("Cast", inputs=squeeze_op.output, attr={"to": onnx_pb.TensorProto.INT32},
                           outputs=[node.output[0]], dtypes=dtypes[0], shapes=shapes[0])
@@ -1499,9 +1499,9 @@ class NonMaxSuppression:
             reduce_op = ctx.make_node("ReduceSum", inputs=shape_op.output, attr={"axes": [0], "keepdims": 0})
             ctx.make_node("Cast", inputs=[reduce_op.output[0]], name="cast_B", attr={"to": onnx_pb.TensorProto.INT32},
                           outputs=[node.output[1]], dtypes=dtypes[1], shapes=shapes[1], op_name_scope=node.name)
-        else:
-            ctx.make_node("Cast", inputs=squeeze_op.output, attr={"to": onnx_pb.TensorProto.INT32},
-                          name=node.name, outputs=node.output, dtypes=dtypes[0], shapes=shapes[0])
+#         else:
+#             ctx.make_node("Cast", inputs=new_nonmaxsurppress.output, attr={"to": onnx_pb.TensorProto.INT32},
+#                           name=node.name, outputs=node.output, dtypes=dtypes[0], shapes=shapes[0])
 
     @classmethod
     def version_11(cls, ctx, node, **kwargs):
